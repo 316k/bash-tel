@@ -1,0 +1,25 @@
+#!/bin/bash
+file=~/.local/share/bash-tel
+
+if [ ! -e $file ]
+then
+    touch $file
+fi
+
+
+if [ -z $1 ]
+then
+    sed "s/^\([0-9]\)/    \1/" $file | uniq | less
+    echo "Usage : tel"
+    echo "        tel [--edit|-e]"
+    echo "        tel [name]"
+elif [ "$1" = "--edit" -o "$1" = "-e" ]
+then
+    $EDITOR $file
+elif [ -n "$1" ]
+then
+    num=`grep -i $1 $file | wc -l`
+    echo $num matches for expression \'$1\'
+    GREP_COLORS="sl=4:ms=4" grep -A 5 -i --color=always "$1" $file | \
+        sed "s/^\([0-9]\)/    \1/" | uniq
+fi
